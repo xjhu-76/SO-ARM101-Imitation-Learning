@@ -1,20 +1,28 @@
 # SO-ARM101 Imitation Learning: ACT vs Pi0.5
 
-<p align="center">
-  <img src="assets/demo.gif" alt="Robot Manipulation Demo" width="600">
-</p>
+<table>
+<tr>
+<td align="center"><b>ACT (Behavior Cloning)</b></td>
+<td align="center"><b>Pi0.5 (VLM Fine-tuning)</b></td>
+</tr>
+<tr>
+<td><img src="assets/act_demo.gif" alt="ACT Demo" width="400"></td>
+<td><img src="assets/pi05_demo.gif" alt="Pi0.5 Demo" width="400"></td>
+</tr>
+</table>
 
 A comparative study of two imitation learning approaches for robotic manipulation on the SO-ARM101 6-DoF robot arm using the [LeRobot](https://github.com/huggingface/lerobot) framework.
 
-## 🎯 Task Description
+## Task Description
 
 **Pick-and-Place Task**: Grasp a red cube (1-inch or 4-inch) and place it into a gray bowl.
 
 <p align="center">
-  <img src="assets/task_setup.png" alt="Task Setup" width="400">
+  <img src="assets/task_setup_side.png" alt="Task Setup - Side View" width="380">
+  <img src="assets/task_setup_above.png" alt="Task Setup - Top View" width="380">
 </p>
 
-## 📊 Results Summary
+## Results Summary
 
 | Metric | ACT (Behavior Cloning) | Pi0.5 (VLM Fine-tuning) |
 |--------|------------------------|-------------------------|
@@ -29,7 +37,15 @@ A comparative study of two imitation learning approaches for robotic manipulatio
 
 > Despite similar grasp success rates, **Pi0.5 demonstrates significantly higher autonomy** with 74% fewer human interventions required. This suggests that the pre-trained VLM backbone provides better generalization to edge cases, even with 33× fewer training steps.
 
-## 🔬 Methods
+## Models and Dataset
+
+| Resource | Link |
+|----------|------|
+| ACT Model | [🤗 xjhu-76/so101-act-pick-place](https://huggingface.co/xjhu-76/so101-act-pick-place) |
+| Pi0.5 Model | [🤗 xjhu-76/so101-pi05-pick-place](https://huggingface.co/xjhu-76/so101-pi05-pick-place) |
+| Dataset | [🤗 xjhu-76/so101-pick-place-dataset](https://huggingface.co/datasets/xjhu-76/so101-pick-place-dataset) |
+
+## Methods
 
 ### 1. ACT (Action Chunking with Transformers)
 
@@ -43,7 +59,7 @@ A comparative study of two imitation learning approaches for robotic manipulatio
 - **Training**: Fine-tuning from `lerobot/pi05_base` checkpoint
 - **Paper**: [π0: A Vision-Language-Action Flow Model for General Robot Control](https://www.physicalintelligence.company/blog/pi0)
 
-## 📈 Training Curves
+## Training Curves
 
 <p align="center">
   <img src="results/training_curves.png" alt="Training Curves" width="700">
@@ -54,7 +70,7 @@ A comparative study of two imitation learning approaches for robotic manipulatio
 | Initial | 0.168 | 0.326 |
 | Final | 0.071 | 0.124 |
 
-## 🛠️ Experimental Setup
+## Experimental Setup
 
 ### Hardware
 
@@ -120,7 +136,7 @@ gpu: A100-SXM4 (80GB)
 </tr>
 </table>
 
-## 🔍 Failure Analysis
+## Failure Analysis
 
 Most grasp failures were **not due to positioning errors**, but rather **insufficient gripper opening amplitude**, causing the gripper to miss the bottom edge of the cube.
 
@@ -131,7 +147,7 @@ Most grasp failures were **not due to positioning errors**, but rather **insuffi
 - Add a third camera dedicated to gripper observation
 - Include more "wide-open gripper" demonstrations in training data
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 SO-ARM101-Imitation-Learning/
@@ -140,21 +156,20 @@ SO-ARM101-Imitation-Learning/
 │   ├── act_config.yaml
 │   └── pi05_config.yaml
 ├── results/
-│   ├── training_curves.png
-│   ├── act_training_log.txt
-│   └── pi05_training_log.txt
-├── videos/
-│   ├── act_inference.mp4
-│   └── pi05_inference.mp4
+│   └── training_curves.png
 ├── assets/
-│   ├── demo.gif
-│   ├── task_setup.png
-│   └── hardware_setup.png
+│   ├── act_demo.gif
+│   ├── pi05_demo.gif
+│   ├── task_setup_side.png
+│   └── task_setup_above.png
+├── docs/
+│   ├── act_training.md
+│   └── pi05_finetuning.md
 └── scripts/
     └── plot_training_curves.py
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -173,7 +188,7 @@ pip install -e ".[feetech]"
 
 ```bash
 python -m lerobot.scripts.train \
-    --dataset.repo_id=xjhu-76/so101_pick_place \
+    --dataset.repo_id=xjhu-76/so101-pick-place-dataset \
     --policy.type=act \
     --output_dir=outputs/act_training \
     --steps=100000 \
@@ -185,7 +200,7 @@ python -m lerobot.scripts.train \
 ```bash
 python -m lerobot.scripts.train \
     --policy.path=lerobot/pi05_base \
-    --dataset.repo_id=xjhu-76/so101_pick_place \
+    --dataset.repo_id=xjhu-76/so101-pick-place-dataset \
     --output_dir=outputs/pi05_training \
     --steps=3000 \
     --batch_size=8
@@ -196,24 +211,21 @@ python -m lerobot.scripts.train \
 ```bash
 python -m lerobot.scripts.control_robot \
     --robot.type=so101_follower \
-    --policy.path=outputs/act_training/checkpoints/100000/pretrained_model
+    --policy.path=xjhu-76/so101-act-pick-place
 ```
 
-## 📚 References
+## References
 
 1. Zhao, T. Z., et al. "Learning Fine-Grained Bimanual Manipulation with Low-Cost Hardware." RSS 2023.
 2. Black, K., et al. "π0: A Vision-Language-Action Flow Model for General Robot Control." Physical Intelligence, 2024.
 3. Cadene, R., et al. "LeRobot: State-of-the-art Machine Learning for Real-World Robotics." Hugging Face, 2024.
 
-## 📄 License
+## License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [Hugging Face LeRobot Team](https://github.com/huggingface/lerobot) for the excellent framework
 - [Physical Intelligence](https://www.physicalintelligence.company/) for Pi0 research
 - SO-ARM101 hardware documentation
-
----
-
