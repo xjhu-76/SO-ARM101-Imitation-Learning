@@ -8,7 +8,4 @@ This directory contains inference demonstration videos.
 - `pi05_inference.mp4` - Pi0.5 policy running on SO-ARM101
 - `comparison.mp4` - Side-by-side comparison (optional)
 
-## Note
 
-Large video files are excluded from git (see .gitignore).
-Consider uploading to YouTube/Google Drive and linking in README.
