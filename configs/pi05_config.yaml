@@ -1,0 +1,97 @@
+# Pi0.5 (Vision-Language-Action Model) Configuration
+# For SO-ARM101 Pick-and-Place Task
+# Training Date: January 2026
+
+# Model Architecture
+policy:
+  type: pi0
+  
+  # Base Model
+  pretrained_path: lerobot/pi05_base
+  
+  # VLM Backbone
+  vlm_backbone: PaliGemma
+  vlm_variant: gemma_2b
+  
+  # Parameters
+  trainable_params: 3616757520  # ~3.6B
+  total_params: 3616757520      # ~3.6B (all trainable)
+  
+  # Device
+  device: cuda
+  use_amp: true
+  dtype: bfloat16
+
+# Dataset
+dataset:
+  repo_id: xjhu-76/so101_pick_place
+  episodes: 60
+  total_frames: 10877
+  
+  # Camera Configuration (same as ACT)
+  cameras:
+    front:
+      type: opencv
+      index: 1
+      width: 640
+      height: 480
+      fps: 30
+    handeye:
+      type: opencv
+      index: 0
+      width: 640
+      height: 480
+      fps: 30
+
+# Training
+training:
+  steps: 3000
+  batch_size: 8
+  num_workers: 4
+  seed: 1000
+  
+  # Optimizer
+  optimizer:
+    type: AdamW
+    lr_peak: 2.5e-5
+    lr_decay: 2.5e-6
+    warmup_steps: 1000
+  
+  # Mixed Precision
+  gradient_checkpointing: true
+  
+  # Logging
+  log_freq: 200
+  save_freq: 1000
+  
+  # Checkpoints
+  save_checkpoint: true
+  output_dir: outputs/train/pi05_so101
+
+# Hardware
+hardware:
+  gpu: NVIDIA A100-SXM4 (80GB)
+  platform: Vast.ai Cloud
+  training_time: ~2-3 hours
+  estimated_cost: $3-5 USD
+
+# Normalization
+normalization:
+  visual: identity
+  state: mean_std
+  action: mean_std
+
+# Results
+results:
+  final_loss: 0.124
+  grasp_success_rate: 13/54 (24.1%)
+  episode_success_rate: 7/9 (77.8%)
+  human_interventions: 2 times over 9 episodes
+  intervention_frequency: 0.22 per episode
+
+# Comparison with ACT
+comparison:
+  training_efficiency: 33x fewer steps required
+  parameter_scale: 65x more parameters
+  autonomy_improvement: 74% reduction in human intervention
+  key_advantage: Better generalization from VLM pre-training

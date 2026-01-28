@@ -1,0 +1,103 @@
+# ACT (Action Chunking with Transformers) Configuration
+# For SO-ARM101 Pick-and-Place Task
+# Training Date: December 2025
+
+# Model Architecture
+policy:
+  type: act
+  
+  # Vision Backbone
+  vision_backbone: resnet18
+  pretrained_backbone_weights: ResNet18_Weights.IMAGENET1K_V1
+  replace_final_stride_with_dilation: false
+  
+  # Transformer Architecture
+  dim_model: 512
+  n_heads: 8
+  dim_feedforward: 3200
+  feedforward_activation: relu
+  n_encoder_layers: 4
+  n_decoder_layers: 1
+  pre_norm: false
+  dropout: 0.1
+  
+  # VAE
+  use_vae: true
+  latent_dim: 32
+  n_vae_encoder_layers: 4
+  kl_weight: 10.0
+  
+  # Action Chunking
+  chunk_size: 100
+  n_action_steps: 100
+  n_obs_steps: 1
+  
+  # Device
+  device: cuda
+  use_amp: false
+
+# Dataset
+dataset:
+  repo_id: xjhu-76/so101_pick_place
+  episodes: 60
+  total_frames: ~10877
+  
+  # Camera Configuration
+  cameras:
+    front:
+      type: opencv
+      index: 1
+      width: 640
+      height: 480
+      fps: 30
+    handeye:
+      type: opencv
+      index: 0
+      width: 640
+      height: 480
+      fps: 30
+
+# Training
+training:
+  steps: 100000
+  batch_size: 8
+  num_workers: 4
+  seed: 1000
+  
+  # Optimizer
+  optimizer:
+    type: AdamW
+    lr: 1.0e-5
+    weight_decay: 1.0e-4
+    lr_backbone: 1.0e-5
+    grad_clip_norm: 10.0
+  
+  # Logging
+  log_freq: 200
+  save_freq: 20000
+  eval_freq: 0  # No simulation eval for real robot
+  
+  # Checkpoints
+  save_checkpoint: true
+  output_dir: outputs/train/act_so101
+
+# Hardware
+hardware:
+  gpu: NVIDIA GeForce RTX 4090 (24GB)
+  platform: Ubuntu 22.04
+  cuda_version: 12.4
+  training_time: ~3 hours
+
+# Results
+results:
+  final_loss: 0.071
+  grasp_success_rate: 8/36 (22.2%)
+  episode_success_rate: 7/7 (100%)
+  human_interventions: 6 times over 7 episodes
+  intervention_frequency: 0.86 per episode
+
+# Normalization
+normalization:
+  visual: mean_std
+  state: mean_std
+  action: mean_std
