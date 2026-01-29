@@ -43,7 +43,7 @@ A comparative study of two imitation learning approaches for robotic manipulatio
 |----------|------|
 | ACT Model | [🤗 xinjiehu76/so101-act-pick-place](https://huggingface.co/xjhu-76/so101-act-pick-place) |
 | Pi0.5 Model | [🤗 xinjiehu76/so101-pi05-pick-place](https://huggingface.co/xjhu-76/so101-pi05-pick-place) |
-| Dataset | [🤗 xinjiehu76/so101-pick-place-dataset](https://huggingface.co/datasets/xjhu-76/so101-pick-place-dataset) |
+| Dataset | [🤗 xinjiehu76/so101-pick-place-dataset](https://huggingface.co/datasets/xinjiehu76/so101-pick-place-dataset) |
 
 ## Methods
 
