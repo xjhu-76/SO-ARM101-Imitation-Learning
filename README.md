@@ -229,3 +229,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 - [Hugging Face LeRobot Team](https://github.com/huggingface/lerobot) for the excellent framework
 - [Physical Intelligence](https://www.physicalintelligence.company/) for Pi0 research
 - SO-ARM101 hardware documentation
+
+## 
+> This project is just for self-learning. The repo is not yet complete, and additional components and documentation are still being added.
+
